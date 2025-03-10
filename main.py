@@ -1,7 +1,13 @@
 from datetime import datetime, timezone
 from fastapi import Depends, FastAPI, HTTPException, Query
 from pydantic import EmailStr
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, Session, SQLModel, select
+from .database import (
+    create_db_and_tables, 
+    drop_all_tables, 
+    engine,
+    get_session
+)
 from typing import Annotated
 
 
@@ -12,26 +18,6 @@ class User(SQLModel, table=True):
     role: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     is_disabled: bool = Field(default=False)
-
-
-sqlite_file_name = "test.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args)
-
-
-def drop_all_tables():
-    SQLModel.metadata.drop_all(engine)
-
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
-
-
-def get_session():
-    with Session(engine) as session:
-        yield session
 
 
 SessionDep = Annotated[Session, Depends(get_session)]
