@@ -25,11 +25,11 @@ SessionDep = Annotated[Session, Depends(get_session)]
 app = FastAPI()
 
 
+@app.on_event("startup")
+def on_startup():
+    drop_all_tables() # Uncomment this line to drop all existing tables
+    create_db_and_tables() # Ensure all tables exists
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-@app.on_event("startup")
-def on_startup():
-    # drop_all_tables() # Uncomment this line to drop all existing tables
-    create_db_and_tables() # Ensure all tables exists
