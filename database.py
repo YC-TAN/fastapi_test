@@ -1,8 +1,14 @@
 from sqlmodel import SQLModel, create_engine, Session
+from dotenv import load_dotenv
+import os
 
 
-sqlite_file_name = "test.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+# Load environment variables from .env file
+load_dotenv()
+
+# sqlite_file_name = "test.db"
+file_name = os.getenv("SQL_FILE_NAME")
+sqlite_url = f"sqlite:///{file_name}"
 
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, connect_args=connect_args)
@@ -14,6 +20,7 @@ def drop_all_tables():
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
+
 
 def get_session():
     with Session(engine) as session:
