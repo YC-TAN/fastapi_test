@@ -27,6 +27,7 @@ async def get_current_user(token: TokenDep, session: SessionDep):
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
@@ -35,7 +36,9 @@ async def get_current_user(token: TokenDep, session: SessionDep):
         token_data = TokenData(email=email)
     except InvalidTokenError:
         raise credentials_exception
+    
     user = get_user_by_email(session=session, email=token_data.email)
+    
     if user is None:
         raise credentials_exception
     return user

@@ -3,6 +3,7 @@ from sqlmodel import Session, select
 
 from .utils import get_password_hash, verify_password
 from .models import User, UserCreate, UserUpdate
+from pydantic import EmailStr
 
 
 # def create_user(*, session: Session, user_create: UserCreate) -> User:
@@ -29,7 +30,7 @@ from .models import User, UserCreate, UserUpdate
 #     return db_user
 
 
-def get_user_by_email(*, session: Session, email: str) -> User | None:
+def get_user_by_email(*, session: Session, email: EmailStr) -> User | None:
     statement = select(User).where(User.email == email)
     session_user = session.exec(statement).first()
     return session_user
